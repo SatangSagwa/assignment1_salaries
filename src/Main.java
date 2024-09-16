@@ -12,8 +12,8 @@ WHILE option != Q:
                 - INPUT - salary for each element
                 - CALC - total value of each element -30% tax
                 - IF total < account balance
+                    - CALC subtract total from account balance
                     - CALC current element after tax
-                    - CALC subtract from account balance
                     - OUTPUT each salary after 30% tax reduction
                 - ELSE
                     - OUTPUT message - not enough balance
@@ -70,6 +70,7 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Main {
+    //Constants
     private static final String OPTIONS_STR = "Enter your option or Q to quit: \n1. Payout Salaries \n2. Create new invoice \n3. New invoice payment\n";
 
     private static final String EMPLOYEE_AMOUNT_STR = "How many employees do you want to payout salaries to?";
@@ -116,19 +117,24 @@ public class Main {
             scanner.nextLine();
 
             switch (option) {
+                //Pay salaries
                 case OPTION_1:
+                    //Get amount of salaries to pay
                     System.out.println(EMPLOYEE_AMOUNT_STR);
                     int amount_of_employees = IntInput();
+                    //Array of the same sixe as specified amount
                     int[] salaries = new int[amount_of_employees];
                     double total = 0;
 
                     for (int i = 0; i < amount_of_employees; i++) {
+                        //Get salary amount for each employee
                         System.out.printf(SALARY_AMOUNT_STR, (i + 1));
                         salaries[i] = IntInput();
                         total = total + (salaries[i] * TAX_REDUCTION);
                     }
 
                     if (account_balance > total) {
+                        //Subtract the total from balance
                         account_balance = account_balance - total;
                         for (int j = 0; j < amount_of_employees; j++) {
                             double after_tax = salaries[j] * TAX_REDUCTION;
@@ -142,31 +148,38 @@ public class Main {
                     }
                     break;
 
+                //Create new invoice
                 case OPTION_2:
                     System.out.println(TOTAL_INVOICE_AMOUNT_STR);
                     int invoice_value = IntInput();
+                    //Calculate tax and net value
                     double sales_tax = invoice_value * INVOICE_REDUCTION;
                     double net_value = invoice_value - sales_tax;
                     System.out.println(GROSS_STR + invoice_value);
                     System.out.println(SALES_TAX_STR + Math.round(sales_tax));
                     System.out.println(NET_STR + Math.round(net_value));
+                    //Add net to balance
                     account_balance += net_value;
                     System.out.println(ACCOUNT_BALANCE_STR + Math.round(account_balance) + "\n");
                     break;
 
+                //New invoice payment
                 case OPTION_3:
+                    //Gets amount of invoices
                     System.out.println(INVOICES_ANOUNT_STR);
                     int invoice_amount = IntInput();
                     int[] invoices = new int[invoice_amount];
                     System.out.println(INVOICE_PROMPT_STR);
                     int total_sum = 0;
 
+                    //Ask for amount of each invoice
                     for (int x = 0; x < invoice_amount; x++) {
                         System.out.printf("Invoice #" + (x+1) + ": ");
                         invoices[x] = IntInput();
                         total_sum += invoices[x];
                     }
                     if(total_sum <= account_balance) {
+                        //Print result
                         System.out.println("Total: " + total_sum);
                         double total_sales_tax = Math.round(total_sum * INVOICE_REDUCTION);
                         double total_with_tax = total_sum - total_sales_tax;
@@ -179,6 +192,7 @@ public class Main {
                         System.out.println("New balance: " + account_balance);
 
                     } else {
+                        //Print error message
                         System.out.println(NOT_ENOUGH_BALANCE_STR);
                         System.out.println("Amount to withdraw: " + total_sum);
                         System.out.println(ACCOUNT_BALANCE_STR + account_balance);
@@ -195,6 +209,9 @@ public class Main {
             }
         }
     }
+    //Returns the int entered by user
+    // - or q to quit
+    // - or prints an error message and loops again until user enters an int
     private static int IntInput() {
         while (true) {
             if (scanner.hasNext()) {
